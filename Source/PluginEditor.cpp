@@ -43,6 +43,7 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     addAndMakeVisible(sendButton);
 
     setSize (320, 548);
+    setResizable(true, true);
 }
 
 PluginMessengerAudioProcessorEditor::~PluginMessengerAudioProcessorEditor()
@@ -59,10 +60,10 @@ void PluginMessengerAudioProcessorEditor::paint (juce::Graphics& g)
 
 void PluginMessengerAudioProcessorEditor::resized()
 {
-    nameEditor.setBounds(32, 20, 180, 32);
-    roomEditor.setBounds(32, 72, 180, 32);
-    connectButton.setBounds(220, 72, 68, 32);
-    messageDisplayWidget.setBounds(32, 124, 256, 320);
-    messageInputEditor.setBounds(32, 464, 196, 64);
-    sendButton.setBounds(236, 480, 52, 32);
+    nameEditor.setBoundsRelative(0.1f, 0.0365f, 0.5625f, 0.05839f);
+    roomEditor.setBoundsRelative(0.1f, 0.1314f, 0.5625f, 0.05839f);
+    connectButton.setBoundsRelative(0.6875f, 0.1314f, 0.2125f, 0.05839f);
+    messageDisplayWidget.setBoundsRelative(0.1f, 0.2263f, 0.8f, 0.5839f);
+    messageInputEditor.setBoundsRelative(0.1f, 0.8467f, 0.6125f, 0.1168f);
+    sendButton.setBoundsRelative(0.7375f, 0.8759f, 0.1625f, 0.05839f);
 }
