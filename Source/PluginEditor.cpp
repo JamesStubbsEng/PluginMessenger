@@ -17,9 +17,9 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
         "Enter your name...", juce::Colours::lightgrey.withAlpha(0.4f));
     addAndMakeVisible(nameEditor);
 
-    roomEditor.setTextToShowWhenEmpty(
+    connectionNameEditor.setTextToShowWhenEmpty(
         "Enter connection name...", juce::Colours::lightgrey.withAlpha(0.4f));
-    addAndMakeVisible(roomEditor);
+    addAndMakeVisible(connectionNameEditor);
 
     messageDisplayWidget.setMultiLine(true);
     messageDisplayWidget.setReadOnly(true);
@@ -31,16 +31,51 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     addAndMakeVisible(messageInputEditor);
 
     connectButton.setButtonText("Connect");
+    connectButton.onClick = [this]
+    {       
+        if (connectionNameEditor.getText().isNotEmpty())
+        {
+            auto pipeAlreadyExists = 
+                audioProcessor.messagingPipe.connectToPipe(connectionNameEditor.getText(), -1);
+               
+            if (!pipeAlreadyExists)
+                audioProcessor.messagingPipe.createPipe(connectionNameEditor.getText(), -1, true);
+        }
+    };
     addAndMakeVisible(connectButton);
 
     sendButton.setButtonText("Send");
     sendButton.onClick = [this]
     {
+        //put outgoing message into message display widget
         messageDisplayWidget.setText(
-            messageDisplayWidget.getText() + "\n" + messageInputEditor.getText(), false);
+            messageDisplayWidget.getText() + messageInputEditor.getText() + "\n", false);
+
+        //send outgoing message over pipe if there is a connection
+        MemoryBlock message(messageInputEditor.getText().toUTF8(), messageInputEditor.getText().getNumBytesAsUTF8());
+        //message.loadFromHexString(messageInputEditor.getText());
+        audioProcessor.messagingPipe.sendMessage(message);
+            
         messageInputEditor.setText("");
     };
     addAndMakeVisible(sendButton);
+
+    // callbacks from pipe
+    audioProcessor.messagingPipe.onMessageReceived = [this](const MemoryBlock& message)
+    {
+        messageDisplayWidget.setText(
+            messageDisplayWidget.getText() + message.toString() + "\n", false);
+    };
+
+    audioProcessor.messagingPipe.onConnectionMade = [this]
+    {
+        DBG("Connection made");
+    };
+
+    audioProcessor.messagingPipe.onConnectionLost = [this]
+    {
+        DBG("Connection lost");
+    };
 
     setSize (320, 548);
     setResizable(true, true);
@@ -61,7 +96,7 @@ void PluginMessengerAudioProcessorEditor::paint (juce::Graphics& g)
 void PluginMessengerAudioProcessorEditor::resized()
 {
     nameEditor.setBoundsRelative(0.1f, 0.0365f, 0.5625f, 0.05839f);
-    roomEditor.setBoundsRelative(0.1f, 0.1314f, 0.5625f, 0.05839f);
+    connectionNameEditor.setBoundsRelative(0.1f, 0.1314f, 0.5625f, 0.05839f);
     connectButton.setBoundsRelative(0.6875f, 0.1314f, 0.2125f, 0.05839f);
     messageDisplayWidget.setBoundsRelative(0.1f, 0.2263f, 0.8f, 0.5839f);
     messageInputEditor.setBoundsRelative(0.1f, 0.8467f, 0.6125f, 0.1168f);

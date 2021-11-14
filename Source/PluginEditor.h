@@ -30,7 +30,7 @@ private:
     PluginMessengerAudioProcessor& audioProcessor;
 
     TextEditor nameEditor;
-    TextEditor roomEditor;
+    TextEditor connectionNameEditor;
     TextEditor messageDisplayWidget;
     TextEditor messageInputEditor;
 

@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-
+#include "Messaging/Pipe.h"
 //==============================================================================
 /**
 */
@@ -52,6 +52,8 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+    Pipe messagingPipe;
 
 private:
     //==============================================================================

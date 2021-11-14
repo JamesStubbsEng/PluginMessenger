@@ -5,6 +5,10 @@
               companyWebsite="j2stubb@uwaterloo.ca">
   <MAINGROUP id="t1GSEN" name="PluginMessenger">
     <GROUP id="{70EAD8AB-B4D8-DDA3-F2D8-2BA54870C467}" name="Source">
+      <GROUP id="{8322E715-08F8-0A96-3E86-F15FA9793CEE}" name="Messaging">
+        <FILE id="DKUMsk" name="Pipe.cpp" compile="1" resource="0" file="Source/Messaging/Pipe.cpp"/>
+        <FILE id="Pa4qUb" name="Pipe.h" compile="0" resource="0" file="Source/Messaging/Pipe.h"/>
+      </GROUP>
       <FILE id="gB9twE" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="mpcy8c" name="PluginProcessor.h" compile="0" resource="0"
