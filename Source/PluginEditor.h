@@ -29,5 +29,13 @@ private:
     // access the processor object that created it.
     PluginMessengerAudioProcessor& audioProcessor;
 
+    TextEditor nameEditor;
+    TextEditor roomEditor;
+    TextEditor messageDisplayWidget;
+    TextEditor messageInputEditor;
+
+    TextButton connectButton;
+    TextButton sendButton;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginMessengerAudioProcessorEditor)
 };
