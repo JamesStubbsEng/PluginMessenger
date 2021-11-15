@@ -19,9 +19,49 @@ PluginMessengerAudioProcessor::PluginMessengerAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
+                       ), messageValueTree(
+                           { "root", {{"name", ""}, {"currentConnectionName", ""}}}
                        )
 #endif
 {
+    //receiving messages callbacks from pipe
+
+    messagingPipe.onMessageReceived = [this](const MemoryBlock& message)
+    {
+        // update valuetree
+        auto connectionVt = messageValueTree.getChildWithProperty(
+            "connectionName", messageValueTree.getProperty("currentConnectionName"));
+        if (!connectionVt.isValid())
+        {
+            connectionVt = { "connection",
+                {
+                    {"connectionName", messagingPipe.getPipe()->getName()}
+                }
+            };
+            connectionVt.appendChild(
+                ValueTree::readFromData(message.getData(), message.getSize()), 0);
+            messageValueTree.appendChild(connectionVt, 0);
+        }
+        else
+        {
+            connectionVt.appendChild(
+                ValueTree::readFromData(message.getData(), message.getSize()), 0);
+        }
+        
+
+
+    };
+
+    messagingPipe.onConnectionMade = [this]
+    {
+        DBG("Connection made");
+    };
+
+    messagingPipe.onConnectionLost = [this]
+    {
+        DBG("Connection lost");
+    };
+
 }
 
 PluginMessengerAudioProcessor::~PluginMessengerAudioProcessor()
@@ -166,7 +206,7 @@ bool PluginMessengerAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginMessengerAudioProcessor::createEditor()
 {
-    return new PluginMessengerAudioProcessorEditor (*this);
+    return new PluginMessengerAudioProcessorEditor (*this, messageValueTree);
 }
 
 //==============================================================================
@@ -181,6 +221,11 @@ void PluginMessengerAudioProcessor::setStateInformation (const void* data, int s
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+Pipe& PluginMessengerAudioProcessor::getMessagingPipe()
+{
+    return messagingPipe;
 }
 
 //==============================================================================

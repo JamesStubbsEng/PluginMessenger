@@ -10,15 +10,21 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (PluginMessengerAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (PluginMessengerAudioProcessor& p, ValueTree& vt)
+    : AudioProcessorEditor (&p), audioProcessor (p), messageValueTree(vt)
 {
+    // setup messageValueTree listener
+    messageValueTree.addListener(this);
+
+    // initialize GUI components
     nameEditor.setTextToShowWhenEmpty(
         "Enter your name...", juce::Colours::lightgrey.withAlpha(0.4f));
     addAndMakeVisible(nameEditor);
 
     connectionNameEditor.setTextToShowWhenEmpty(
         "Enter connection name...", juce::Colours::lightgrey.withAlpha(0.4f));
+    connectionNameEditor.getTextValue().referTo(
+        messageValueTree.getPropertyAsValue("currentConnectionName", 0));
     addAndMakeVisible(connectionNameEditor);
 
     messageDisplayWidget.setMultiLine(true);
@@ -36,10 +42,10 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
         if (connectionNameEditor.getText().isNotEmpty())
         {
             auto pipeAlreadyExists = 
-                audioProcessor.messagingPipe.connectToPipe(connectionNameEditor.getText(), -1);
+                audioProcessor.getMessagingPipe().connectToPipe(connectionNameEditor.getText(), -1);
                
             if (!pipeAlreadyExists)
-                audioProcessor.messagingPipe.createPipe(connectionNameEditor.getText(), -1, true);
+                audioProcessor.getMessagingPipe().createPipe(connectionNameEditor.getText(), -1, true);
         }
     };
     addAndMakeVisible(connectButton);
@@ -47,35 +53,44 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     sendButton.setButtonText("Send");
     sendButton.onClick = [this]
     {
-        //put outgoing message into message display widget
-        messageDisplayWidget.setText(
-            messageDisplayWidget.getText() + messageInputEditor.getText() + "\n", false);
+        ValueTree messageToSend = { "message",
+            {
+                {"senderName", nameEditor.getText()},
+                {"messageBody", messageInputEditor.getText()}
+            }
+        };
 
-        //send outgoing message over pipe if there is a connection
-        MemoryBlock message(messageInputEditor.getText().toUTF8(), messageInputEditor.getText().getNumBytesAsUTF8());
-        //message.loadFromHexString(messageInputEditor.getText());
-        audioProcessor.messagingPipe.sendMessage(message);
-            
+        // send over pipe
+        MemoryOutputStream os;
+        messageToSend.writeToStream(os);
+
+        audioProcessor.getMessagingPipe().sendMessage(os.getMemoryBlock());
+
+        //put outgoing message into valuetree
+        auto connectionVt = messageValueTree.getChildWithProperty(
+            "connectionName", messageValueTree.getProperty("currentConnectionName"));
+        if (!connectionVt.isValid())
+        {
+            connectionVt = { "connection",
+                {
+                    {"connectionName", messageValueTree.getProperty("currentConnectionName")}
+                }
+            };
+            connectionVt.appendChild(messageToSend, 0);
+            messageValueTree.appendChild(connectionVt, 0);
+        }
+        else
+        {
+            connectionVt.appendChild(messageToSend, 0);
+        }
+        
+
+        //clear input
         messageInputEditor.setText("");
+
+        DBG(messageValueTree.toXmlString());
     };
     addAndMakeVisible(sendButton);
-
-    // callbacks from pipe
-    audioProcessor.messagingPipe.onMessageReceived = [this](const MemoryBlock& message)
-    {
-        messageDisplayWidget.setText(
-            messageDisplayWidget.getText() + message.toString() + "\n", false);
-    };
-
-    audioProcessor.messagingPipe.onConnectionMade = [this]
-    {
-        DBG("Connection made");
-    };
-
-    audioProcessor.messagingPipe.onConnectionLost = [this]
-    {
-        DBG("Connection lost");
-    };
 
     setSize (320, 548);
     setResizable(true, true);
@@ -83,6 +98,7 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
 
 PluginMessengerAudioProcessorEditor::~PluginMessengerAudioProcessorEditor()
 {
+    messageValueTree.removeListener(this);
 }
 
 //==============================================================================
@@ -101,4 +117,24 @@ void PluginMessengerAudioProcessorEditor::resized()
     messageDisplayWidget.setBoundsRelative(0.1f, 0.2263f, 0.8f, 0.5839f);
     messageInputEditor.setBoundsRelative(0.1f, 0.8467f, 0.6125f, 0.1168f);
     sendButton.setBoundsRelative(0.7375f, 0.8759f, 0.1625f, 0.05839f);
+}
+
+void PluginMessengerAudioProcessorEditor::valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded)
+{
+    //update messageDisplayWidget (for now just used TextEditor instead of widget)
+
+    auto connectionVt = messageValueTree.getChildWithProperty(
+        "connectionName", messageValueTree.getProperty("currentConnectionName"));
+    if (connectionVt.isValid())
+    {
+        String displayMessage;
+        for (int i = 0; i < connectionVt.getNumChildren(); i++)
+        {
+            auto senderName = connectionVt.getChild(i).getProperty("senderName");
+            auto messageBody = connectionVt.getChild(i).getProperty("messageBody");
+            displayMessage = displayMessage + messageBody + " - " + senderName + "\n";        
+        }
+           
+        messageDisplayWidget.setText(displayMessage, false);
+    }  
 }

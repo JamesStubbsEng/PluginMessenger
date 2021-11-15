@@ -53,9 +53,12 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    Pipe messagingPipe;
+    Pipe& getMessagingPipe();
 
 private:
     //==============================================================================
+    Pipe messagingPipe;
+    ValueTree messageValueTree;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginMessengerAudioProcessor)
 };

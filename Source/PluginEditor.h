@@ -14,10 +14,10 @@
 //==============================================================================
 /**
 */
-class PluginMessengerAudioProcessorEditor  : public juce::AudioProcessorEditor
+class PluginMessengerAudioProcessorEditor  : public juce::AudioProcessorEditor, public ValueTree::Listener
 {
 public:
-    PluginMessengerAudioProcessorEditor (PluginMessengerAudioProcessor&);
+    PluginMessengerAudioProcessorEditor (PluginMessengerAudioProcessor&, ValueTree&);
     ~PluginMessengerAudioProcessorEditor() override;
 
     //==============================================================================
@@ -25,9 +25,10 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+    void valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded) override;
     PluginMessengerAudioProcessor& audioProcessor;
+
+    ValueTree messageValueTree;
 
     TextEditor nameEditor;
     TextEditor connectionNameEditor;
