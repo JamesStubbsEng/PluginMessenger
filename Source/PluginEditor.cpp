@@ -162,8 +162,8 @@ void PluginMessengerAudioProcessorEditor::updateMessageDisplayWidget()
 
 void PluginMessengerAudioProcessorEditor::updateConnectionButton()
 {
-    auto currentConnectionName = messageValueTree.getProperty("isConnected");
-    if (currentConnectionName)
+    auto isConnected = messageValueTree.getProperty("isConnected");
+    if (isConnected)
         connectButton.setButtonText("Disconnect");
     else
         connectButton.setButtonText("Connect");
