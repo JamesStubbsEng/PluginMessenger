@@ -26,6 +26,8 @@ public:
 
 private:
     void valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded) override;
+    void updateMessageDisplayWidget();
+
     PluginMessengerAudioProcessor& audioProcessor;
 
     ValueTree messageValueTree;

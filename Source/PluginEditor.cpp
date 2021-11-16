@@ -19,6 +19,8 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     // initialize GUI components
     nameEditor.setTextToShowWhenEmpty(
         "Enter your name...", juce::Colours::lightgrey.withAlpha(0.4f));
+    nameEditor.getTextValue().referTo(
+        messageValueTree.getPropertyAsValue("name", 0));
     addAndMakeVisible(nameEditor);
 
     connectionNameEditor.setTextToShowWhenEmpty(
@@ -84,13 +86,14 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
             connectionVt.appendChild(messageToSend, 0);
         }
         
-
         //clear input
         messageInputEditor.setText("");
 
         DBG(messageValueTree.toXmlString());
     };
     addAndMakeVisible(sendButton);
+
+    updateMessageDisplayWidget();
 
     setSize (320, 548);
     setResizable(true, true);
@@ -122,7 +125,11 @@ void PluginMessengerAudioProcessorEditor::resized()
 void PluginMessengerAudioProcessorEditor::valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded)
 {
     //update messageDisplayWidget (for now just used TextEditor instead of widget)
+    updateMessageDisplayWidget();   
+}
 
+void PluginMessengerAudioProcessorEditor::updateMessageDisplayWidget()
+{
     auto connectionVt = messageValueTree.getChildWithProperty(
         "connectionName", messageValueTree.getProperty("currentConnectionName"));
     if (connectionVt.isValid())
@@ -132,9 +139,9 @@ void PluginMessengerAudioProcessorEditor::valueTreeChildAdded(ValueTree& parentT
         {
             auto senderName = connectionVt.getChild(i).getProperty("senderName");
             auto messageBody = connectionVt.getChild(i).getProperty("messageBody");
-            displayMessage = displayMessage + messageBody + " - " + senderName + "\n";        
+            displayMessage = displayMessage + messageBody + " - " + senderName + "\n";
         }
-           
+
         messageDisplayWidget.setText(displayMessage, false);
-    }  
+    }
 }
