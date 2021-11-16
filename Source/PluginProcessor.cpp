@@ -20,7 +20,7 @@ PluginMessengerAudioProcessor::PluginMessengerAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), messageValueTree(
-                           { "root", {{"name", ""}, {"currentConnectionName", ""}}}
+                           { "root", {{"name", ""}, {"currentConnectionName", ""}, {"isConnected", false}}}
                        )
 #endif
 {
@@ -55,11 +55,13 @@ PluginMessengerAudioProcessor::PluginMessengerAudioProcessor()
     messagingPipe.onConnectionMade = [this]
     {
         DBG("Connection made");
+        messageValueTree.setProperty("isConnected", true, 0);
     };
 
     messagingPipe.onConnectionLost = [this]
     {
         DBG("Connection lost");
+        messageValueTree.setProperty("isConnected", false, 0);
     };
 
 }

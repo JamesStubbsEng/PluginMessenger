@@ -38,16 +38,22 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     messageInputEditor.setReturnKeyStartsNewLine(true);
     addAndMakeVisible(messageInputEditor);
 
-    connectButton.setButtonText("Connect");
     connectButton.onClick = [this]
-    {       
-        if (connectionNameEditor.getText().isNotEmpty())
+    {   
+        if (connectionNameEditor.getText().isEmpty())
+            return;
+        auto& pipe = audioProcessor.getMessagingPipe();
+        if (!pipe.isConnected())
         {
             auto pipeAlreadyExists = 
-                audioProcessor.getMessagingPipe().connectToPipe(connectionNameEditor.getText(), -1);
+                pipe.connectToPipe(connectionNameEditor.getText(), -1);
                
             if (!pipeAlreadyExists)
-                audioProcessor.getMessagingPipe().createPipe(connectionNameEditor.getText(), -1, true);
+                pipe.createPipe(connectionNameEditor.getText(), -1, true);
+        }
+        else
+        {
+            pipe.getPipe()->close();
         }
     };
     addAndMakeVisible(connectButton);
@@ -94,6 +100,7 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     addAndMakeVisible(sendButton);
 
     updateMessageDisplayWidget();
+    updateConnectionButton();
 
     setSize (320, 548);
     setResizable(true, true);
@@ -128,6 +135,13 @@ void PluginMessengerAudioProcessorEditor::valueTreeChildAdded(ValueTree& parentT
     updateMessageDisplayWidget();   
 }
 
+void PluginMessengerAudioProcessorEditor::valueTreePropertyChanged(ValueTree& tree, const Identifier& propertyID) 
+{
+    //update connect button text
+    if (propertyID == Identifier("isConnected"))
+        updateConnectionButton();
+}
+
 void PluginMessengerAudioProcessorEditor::updateMessageDisplayWidget()
 {
     auto connectionVt = messageValueTree.getChildWithProperty(
@@ -144,4 +158,13 @@ void PluginMessengerAudioProcessorEditor::updateMessageDisplayWidget()
 
         messageDisplayWidget.setText(displayMessage, false);
     }
+}
+
+void PluginMessengerAudioProcessorEditor::updateConnectionButton()
+{
+    auto currentConnectionName = messageValueTree.getProperty("isConnected");
+    if (currentConnectionName)
+        connectButton.setButtonText("Disconnect");
+    else
+        connectButton.setButtonText("Connect");
 }
