@@ -4,7 +4,25 @@
               addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" companyName="James Stubbs"
               companyWebsite="j2stubb@uwaterloo.ca">
   <MAINGROUP id="t1GSEN" name="PluginMessenger">
+    <GROUP id="{2B95260E-656E-5247-E731-EFE6D8E7E3AF}" name="Resources">
+      <FILE id="jMDDZB" name="RobotoCondensed-Bold.ttf" compile="0" resource="1"
+            file="Resources/RobotoCondensed-Bold.ttf"/>
+      <FILE id="RI6peH" name="RobotoCondensed-Regular.ttf" compile="0" resource="1"
+            file="Resources/RobotoCondensed-Regular.ttf"/>
+    </GROUP>
     <GROUP id="{70EAD8AB-B4D8-DDA3-F2D8-2BA54870C467}" name="Source">
+      <GROUP id="{83261BD4-BF2A-5655-16B4-69DA203794F8}" name="fonts">
+        <FILE id="yp2hmj" name="RobotoCondensed.cpp" compile="1" resource="0"
+              file="Source/fonts/RobotoCondensed.cpp"/>
+        <FILE id="qQ7AJY" name="RobotoCondensed.h" compile="0" resource="0"
+              file="Source/fonts/RobotoCondensed.h"/>
+      </GROUP>
+      <GROUP id="{4730903E-4B95-7472-F136-EFB32592C785}" name="LookAndFeel">
+        <FILE id="xjzj3X" name="PluginMessengerLAF.cpp" compile="1" resource="0"
+              file="Source/LookAndFeel/PluginMessengerLAF.cpp"/>
+        <FILE id="ze94Pa" name="PluginMessengerLAF.h" compile="0" resource="0"
+              file="Source/LookAndFeel/PluginMessengerLAF.h"/>
+      </GROUP>
       <GROUP id="{8322E715-08F8-0A96-3E86-F15FA9793CEE}" name="Messaging">
         <FILE id="DKUMsk" name="Pipe.cpp" compile="1" resource="0" file="Source/Messaging/Pipe.cpp"/>
         <FILE id="Pa4qUb" name="Pipe.h" compile="0" resource="0" file="Source/Messaging/Pipe.h"/>
