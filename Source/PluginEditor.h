@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "LookAndFeel/PluginMessengerLAF.h"
 
 //==============================================================================
 /**
@@ -30,6 +31,8 @@ private:
     
     void updateMessageDisplayWidget();
     void updateConnectionButton();
+
+    PluginMessengerLAF pluginMessengerLAF;
 
     PluginMessengerAudioProcessor& audioProcessor;
 

@@ -16,26 +16,45 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     // setup messageValueTree listener
     messageValueTree.addListener(this);
 
+    // setup LAF to be used TextEditors and TextButtons
+    auto outlineColour = Colour(0xff77737a);
+    pluginMessengerLAF.setColour(TextEditor::backgroundColourId, Colours::black.withAlpha(0.1f));
+    pluginMessengerLAF.setColour(TextEditor::outlineColourId, outlineColour);
+    pluginMessengerLAF.setColour(TextEditor::textColourId, Colours::white);
+    pluginMessengerLAF.setColour(TextButton::buttonColourId, Colours::black.withAlpha(0.1f));
+    pluginMessengerLAF.setColour(ComboBox::outlineColourId, outlineColour);
+    getLookAndFeel().setDefaultLookAndFeel(&pluginMessengerLAF);
+
     // initialize GUI components
     nameEditor.setTextToShowWhenEmpty(
         "Enter your name...", juce::Colours::lightgrey.withAlpha(0.4f));
     nameEditor.getTextValue().referTo(
         messageValueTree.getPropertyAsValue("name", 0));
+    nameEditor.setFont(pluginMessengerLAF.getFont());
+    nameEditor.setJustification(Justification::centredLeft);
+    nameEditor.setIndents(10, 0);
     addAndMakeVisible(nameEditor);
 
     connectionNameEditor.setTextToShowWhenEmpty(
         "Enter connection name...", juce::Colours::lightgrey.withAlpha(0.4f));
     connectionNameEditor.getTextValue().referTo(
         messageValueTree.getPropertyAsValue("currentConnectionName", 0));
+    connectionNameEditor.setFont(pluginMessengerLAF.getFont());
+    connectionNameEditor.setJustification(Justification::centredLeft);
+    connectionNameEditor.setIndents(10, 0);
     addAndMakeVisible(connectionNameEditor);
 
     messageDisplayWidget.setMultiLine(true);
     messageDisplayWidget.setReadOnly(true);
     messageDisplayWidget.setCaretVisible(false);
+    messageDisplayWidget.setFont(pluginMessengerLAF.getFont());
     addAndMakeVisible(messageDisplayWidget);
 
     messageInputEditor.setMultiLine(true);
     messageInputEditor.setReturnKeyStartsNewLine(true);
+    messageInputEditor.setFont(pluginMessengerLAF.getFont());
+    messageInputEditor.setJustification(Justification::topLeft);
+    messageInputEditor.setIndents(10, 6);
     addAndMakeVisible(messageInputEditor);
 
     connectButton.onClick = [this]
@@ -102,7 +121,7 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     updateMessageDisplayWidget();
     updateConnectionButton();
 
-    setSize (320, 548);
+    setSize (340, 550);
     setResizable(true, true);
 }
 
