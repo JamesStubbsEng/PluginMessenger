@@ -11,6 +11,16 @@
             file="Resources/RobotoCondensed-Regular.ttf"/>
     </GROUP>
     <GROUP id="{70EAD8AB-B4D8-DDA3-F2D8-2BA54870C467}" name="Source">
+      <GROUP id="{B56408B7-191E-6162-ABA5-1595220E102B}" name="Widgets">
+        <FILE id="KDWmxk" name="MessageDisplayRow.cpp" compile="1" resource="0"
+              file="Source/Widgets/MessageDisplayRow.cpp"/>
+        <FILE id="RdVmKF" name="MessageDisplayRow.h" compile="0" resource="0"
+              file="Source/Widgets/MessageDisplayRow.h"/>
+        <FILE id="hwyW9V" name="MessageDisplayWidget.cpp" compile="1" resource="0"
+              file="Source/Widgets/MessageDisplayWidget.cpp"/>
+        <FILE id="sCq8cT" name="MessageDisplayWidget.h" compile="0" resource="0"
+              file="Source/Widgets/MessageDisplayWidget.h"/>
+      </GROUP>
       <GROUP id="{83261BD4-BF2A-5655-16B4-69DA203794F8}" name="fonts">
         <FILE id="yp2hmj" name="RobotoCondensed.cpp" compile="1" resource="0"
               file="Source/fonts/RobotoCondensed.cpp"/>

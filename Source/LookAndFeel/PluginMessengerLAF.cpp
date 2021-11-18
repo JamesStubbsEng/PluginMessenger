@@ -62,3 +62,20 @@ void PluginMessengerLAF::drawButtonBackground(Graphics& g,
     g.setColour(button.findColour(ComboBox::outlineColourId));
     g.drawRoundedRectangle(bounds, roundingCornerSize, outlineThickness);
 }
+
+void PluginMessengerLAF::drawScrollbar(Graphics& g, ScrollBar& scrollbar, int x, int y, int width, int height,
+    bool isScrollbarVertical, int thumbStartPosition, int thumbSize, bool isMouseOver, bool isMouseDown) 
+{
+    ignoreUnused(isMouseDown);
+
+    Rectangle<int> thumbBounds;
+
+    if (isScrollbarVertical)
+        thumbBounds = { x, thumbStartPosition, width, thumbSize };
+    else
+        thumbBounds = { thumbStartPosition, y, thumbSize, height };
+
+    auto c = scrollbar.findColour(ScrollBar::ColourIds::thumbColourId);
+    g.setColour(isMouseOver ? c.brighter(0.25f) : c);
+    g.fillRoundedRectangle(thumbBounds.reduced(1).toFloat(), 4.0f);
+}

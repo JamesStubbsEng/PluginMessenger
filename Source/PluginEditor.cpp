@@ -23,6 +23,7 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     pluginMessengerLAF.setColour(TextEditor::textColourId, Colours::white);
     pluginMessengerLAF.setColour(TextButton::buttonColourId, Colours::black.withAlpha(0.1f));
     pluginMessengerLAF.setColour(ComboBox::outlineColourId, outlineColour);
+    pluginMessengerLAF.setColour(ScrollBar::ColourIds::thumbColourId, Colour(0xFF8500D1));
     getLookAndFeel().setDefaultLookAndFeel(&pluginMessengerLAF);
 
     // initialize GUI components
@@ -44,10 +45,12 @@ PluginMessengerAudioProcessorEditor::PluginMessengerAudioProcessorEditor (Plugin
     connectionNameEditor.setIndents(10, 0);
     addAndMakeVisible(connectionNameEditor);
 
-    messageDisplayWidget.setMultiLine(true);
-    messageDisplayWidget.setReadOnly(true);
-    messageDisplayWidget.setCaretVisible(false);
-    messageDisplayWidget.setFont(pluginMessengerLAF.getFont());
+    //messageDisplayWidget.setMultiLine(true);
+    //messageDisplayWidget.setReadOnly(true);
+    //messageDisplayWidget.setCaretVisible(false);
+    //messageDisplayWidget.setFont(pluginMessengerLAF.getFont());
+    //addAndMakeVisible(messageDisplayWidget);
+
     addAndMakeVisible(messageDisplayWidget);
 
     messageInputEditor.setMultiLine(true);
@@ -165,15 +168,19 @@ void PluginMessengerAudioProcessorEditor::updateMessageDisplayWidget()
         "connectionName", messageValueTree.getProperty("currentConnectionName"));
     if (connectionVt.isValid())
     {
+        messageDisplayWidget.clear();
         String displayMessage;
         for (int i = 0; i < connectionVt.getNumChildren(); i++)
         {
             auto senderName = connectionVt.getChild(i).getProperty("senderName");
             auto messageBody = connectionVt.getChild(i).getProperty("messageBody");
-            displayMessage = displayMessage + messageBody + " - " + senderName + "\n";
+            auto isMessageOutgoing = senderName == messageValueTree.getProperty("name");
+            messageDisplayWidget.addRowComponent(senderName.toString(), messageBody.toString(), isMessageOutgoing);
+            //displayMessage = displayMessage + messageBody + " - " + senderName + "\n";
         }
 
-        messageDisplayWidget.setText(displayMessage, false);
+        //messageDisplayWidget.setText(displayMessage, false);
+       
     }
 }
 

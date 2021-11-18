@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "LookAndFeel/PluginMessengerLAF.h"
+#include "Widgets/MessageDisplayWidget.h"
 
 //==============================================================================
 /**
@@ -40,8 +41,10 @@ private:
 
     TextEditor nameEditor;
     TextEditor connectionNameEditor;
-    TextEditor messageDisplayWidget;
+    //TextEditor messageDisplayWidget;
     TextEditor messageInputEditor;
+
+    MessageDisplayWidget messageDisplayWidget;
 
     TextButton connectButton;
     TextButton sendButton;

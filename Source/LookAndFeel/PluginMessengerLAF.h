@@ -21,6 +21,8 @@ public:
         bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
     Font getTextButtonFont(TextButton&, int buttonHeight) override;
     Font getFont();
+    void drawScrollbar(Graphics& g, ScrollBar& scrollbar, int x, int y, int width, int height,
+        bool isScrollbarVertical, int thumbStartPosition, int thumbSize, bool isMouseOver, bool isMouseDown) override;
 private:
     int roundingCornerSize = 6;
     float outlineThickness = 2;
